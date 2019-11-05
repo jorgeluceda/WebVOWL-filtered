@@ -10,6 +10,7 @@ module.exports = function (){
     filteredNodes,
     filteredProperties;
   
+  var importantNodes = ["coastal flood", "flood"]
   
   /**
    * If enabled, all datatypes and literals including connected properties are filtered.
@@ -36,11 +37,16 @@ module.exports = function (){
   }
   
   function isImportantNode( node ){
-    // for future reference: element if it is a subclass of, or disjoint with 
-    //  if ( element.type() === "rdfs:subClassOf" || element.type() === "owl:disjointWith" ) {
-    // alert(JSON.stringify(node.labelForCurrentLanguage()));
-    return (node.labelForCurrentLanguage() == "flood" || 
-            node.labelForCurrentLanguage() == "coastal flood") ? true : false;
+
+    var isImportant = false;
+    //find out if the node is important
+    for(i = 0; i < importantNodes.length(); i++) {
+      if(node.labelForCurrentLanguage() == importantNodes[i]) {
+        isImportant = true;
+      } 
+    }
+
+    return isImportant;
   }
   
   filter.enabled = function ( p ){
