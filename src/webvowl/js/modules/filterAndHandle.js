@@ -29,14 +29,18 @@ module.exports = function (){
   };
   
   function removeDatatypesAndLiterals(){
-    var filteredData = filterTools.filterNodesAndTidy(nodes, properties, isNoDatatypeOrLiteral);
+    var filteredData = filterTools.filterNodesAndTidy(nodes, properties, isImportantNode);
     
     nodes = filteredData.nodes;
     properties = filteredData.properties;
   }
   
-  function isNoDatatypeOrLiteral( node ){
-    return !elementTools.isDatatype(node) && elementTools.isDatatype(node);
+  function isImportantNode( node ){
+    // for future reference: element if it is a subclass of, or disjoint with 
+    //  if ( element.type() === "rdfs:subClassOf" || element.type() === "owl:disjointWith" ) {
+    // alert(JSON.stringify(node.labelForCurrentLanguage()));
+    return (node.labelForCurrentLanguage() == "flood" || 
+            node.labelForCurrentLanguage() == "coastal flood") ? true : false;
   }
   
   filter.enabled = function ( p ){
