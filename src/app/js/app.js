@@ -35,8 +35,10 @@ module.exports = function (){
     compactNotationSwitch = webvowl.modules.compactNotationSwitch(graph),
     datatypeFilter = webvowl.modules.datatypeFilter(),
     disjointFilter = webvowl.modules.disjointFilter(),
-    focuser = webvowl.modules.focuser(graph),
     emptyLiteralFilter = webvowl.modules.emptyLiteralFilter(),
+    // OUR CUSTOM FILTER AND HANDLER
+    filterAndHandle = webvowl.modules.filterAndHandle(),
+    focuser = webvowl.modules.focuser(graph),
     nodeDegreeFilter = webvowl.modules.nodeDegreeFilter(filterMenu),
     nodeScalingSwitch = webvowl.modules.nodeScalingSwitch(graph),
     objectPropertyFilter = webvowl.modules.objectPropertyFilter(),
@@ -196,6 +198,8 @@ module.exports = function (){
     
     options.filterModules().push(nodeDegreeFilter);
     options.filterModules().push(datatypeFilter);
+    // OUR CUSTOM FILTER AND HANDLER
+    options.filterModules().push(filterAndHandle);
     options.filterModules().push(objectPropertyFilter);
     options.filterModules().push(subclassFilter);
     options.filterModules().push(disjointFilter);
