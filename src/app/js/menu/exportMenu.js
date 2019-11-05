@@ -143,6 +143,7 @@ module.exports = function ( graph ){
       currObj.editorMode = "false";
     }
     currObj.filter_datatypes = String(graph.options().filterMenu().getCheckBoxValue("datatypeFilterCheckbox"));
+    currObj.filter_and_handle = String(graph.options().filterMenu().getCheckBoxValue("filterAndHandleCheckbox"));
     currObj.filter_sco = String(graph.options().filterMenu().getCheckBoxValue("subclassFilterCheckbox"));
     currObj.filter_disjoint = String(graph.options().filterMenu().getCheckBoxValue("disjointFilterCheckbox"));
     currObj.filter_setOperator = String(graph.options().filterMenu().getCheckBoxValue("setoperatorFilterCheckbox"));

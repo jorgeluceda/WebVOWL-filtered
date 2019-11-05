@@ -15,7 +15,7 @@ module.exports = function ( graph ){
   var showLoadingDetails = false;
   var visibilityStatus = true;
   
-  var DEFAULT_JSON_NAME = "foaf"; // This file is loaded by default
+  var DEFAULT_JSON_NAME = "environmentalhazards"; // This file is loaded by default
   var conversion_sessionId;
   
   /** variable defs **/
