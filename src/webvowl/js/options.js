@@ -36,6 +36,7 @@ module.exports = function (){
     graphObject,
     zoomSlider,
     datatypeFilter,
+    filterAndHandle,
     focuserModule,
     colorExternalsModule,
     compactNotationModule,
@@ -222,6 +223,11 @@ module.exports = function (){
     if ( !arguments.length ) return datatypeFilter;
     datatypeFilter = val;
   };
+
+  options.filterAndHandle = function ( val ){
+    if ( !arguments.length ) return filterAndHandle;
+    filterAndHandle = val;
+  };
   
   options.showDraggerObject = function ( val ){
     if ( !arguments.length ) {
@@ -332,6 +338,7 @@ module.exports = function (){
   defaultOptionsConfig.dd = 120;
   defaultOptionsConfig.editorMode = "false";
   defaultOptionsConfig.filter_datatypes = "false";
+  defaultOptionsConfig.filter_and_handle = "false";
   defaultOptionsConfig.filter_objectProperties = "false";
   defaultOptionsConfig.filter_sco = "false";
   defaultOptionsConfig.filter_disjoint = "true";
@@ -353,6 +360,7 @@ module.exports = function (){
     initCfg.dd = 120;
     initCfg.editorMode = "false";
     initCfg.filter_datatypes = "false";
+    initCfg.filter_and_handle = "false";
     initCfg.filter_objectProperties = "false";
     initCfg.filter_sco = "false";
     initCfg.filter_disjoint = "true";
@@ -380,6 +388,8 @@ module.exports = function (){
     defaultOptionsConfig.cd = options.classDistance();
     defaultOptionsConfig.dd = options.datatypeDistance();
     defaultOptionsConfig.filter_datatypes = String(options.filterMenu().getCheckBoxValue("datatypeFilterCheckbox"));
+    defaultOptionsConfig.filter_and_handle = String(options.filterMenu().getCheckBoxValue("filterAndHandleCheckbox"));
+
     defaultOptionsConfig.filter_sco = String(options.filterMenu().getCheckBoxValue("subclassFilterCheckbox"));
     defaultOptionsConfig.filter_disjoint = String(options.filterMenu().getCheckBoxValue("disjointFilterCheckbox"));
     defaultOptionsConfig.filter_setOperator = String(options.filterMenu().getCheckBoxValue("setoperatorFilterCheckbox"));
@@ -647,6 +657,13 @@ module.exports = function (){
         options.executeHiddenDebugFeatuers();
       }
       defaultOptionsConfig.debugFeatures = opts.debugFeatures;
+    }
+
+    settingFlag = false;
+    if ( opts.filter_and_handle ) {
+      if ( opts.filter_and_handle === "true" ) settingFlag = true;
+      filterMenu.setCheckBoxValue("filterAndHandleCheckBox", settingFlag);
+      defaultOptionsConfig.filter_and_handle = opts.filter_and_handle;
     }
     
     settingFlag = false;

@@ -21,7 +21,23 @@
       "envo" : "http://purl.obolibrary.org/obo/envo#",
       "foaf" : "http://xmlns.com/foaf/0.1/"
     },
-    "iri" : "http://purl.obolibrary.org/obo/envo/subsets/environmental_hazards.owl"
+    "title": {
+      "undefined": "EnvoScholar v3.0 Ontology"
+    },
+    "iri" : "http://purl.obolibrary.org/obo/envo/subsets/environmental_hazards.owl",
+    "description": {
+      "undefined": "The EnvoScholar v3.0 Vocabulary, described using W3C RDF Schema and the Web Ontology Language."
+    },
+    "other": {
+      "title": [
+        {
+          "identifier": "title",
+          "language": "undefined",
+          "value": "EnvoScholar v3.0 vocabulary",
+          "type": "label"
+        }
+      ]
+    }
   },
   "namespace" : [ ],
   "class" : [ {

@@ -36,13 +36,14 @@ module.exports = function ( graph ){
   /**
    * Connects the website with graph filters.
    * @param datatypeFilter filter for all datatypes
+   * @param filterAndHandle filter and handler for specific set of nodes and links
    * @param objectPropertyFilter filter for all object properties
    * @param subclassFilter filter for all subclasses
    * @param disjointFilter filter for all disjoint with properties
    * @param setOperatorFilter filter for all set operators with properties
    * @param nodeDegreeFilter filters nodes by their degree
    */
-  filterMenu.setup = function ( datatypeFilter, objectPropertyFilter, subclassFilter, disjointFilter, setOperatorFilter, nodeDegreeFilter ){
+  filterMenu.setup = function ( datatypeFilter, filterAndHandle, objectPropertyFilter, subclassFilter, disjointFilter, setOperatorFilter, nodeDegreeFilter ){
     // TODO: is this here really necessarry? << new menu visualization style?
     menuControl.on("mouseover", function (){
       var searchMenu = graph.options().searchMenu();
@@ -53,6 +54,7 @@ module.exports = function ( graph ){
     });
     
     addFilterItem(datatypeFilter, "datatype", "Datatype properties", "#datatypeFilteringOption");
+    addFilterItem(filterAndHandle, "filterAndHandle", "FilterAndHandle properties", "#filterAndHandleFilteringOption")
     addFilterItem(objectPropertyFilter, "objectProperty", "Object properties", "#objectPropertyFilteringOption");
     addFilterItem(subclassFilter, "subclass", "Solitary subclasses", "#subclassFilteringOption");
     addFilterItem(disjointFilter, "disjoint", "Class disjointness", "#disjointFilteringOption");

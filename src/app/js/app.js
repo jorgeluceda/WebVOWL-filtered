@@ -212,7 +212,7 @@ module.exports = function (){
     
     exportMenu.setup();
     gravityMenu.setup();
-    filterMenu.setup(datatypeFilter, objectPropertyFilter, subclassFilter, disjointFilter, setOperatorFilter, nodeDegreeFilter);
+    filterMenu.setup(datatypeFilter, filterAndHandle, objectPropertyFilter, subclassFilter, disjointFilter, setOperatorFilter, nodeDegreeFilter);
     modeMenu.setup(pickAndPin, nodeScalingSwitch, compactNotationSwitch, colorExternalsSwitch);
     pauseMenu.setup();
     sidebar.setup();
@@ -265,6 +265,8 @@ module.exports = function (){
       options.warningModule(warningModule);
       options.directInputModule(directInputMod);
       options.datatypeFilter(datatypeFilter);
+      options.filterAndHandle(filterAndHandle);
+
       options.objectPropertyFilter(objectPropertyFilter);
       options.subclassFilter(subclassFilter);
       options.setOperatorFilter(setOperatorFilter);
