@@ -407,6 +407,17 @@ module.exports = function ( graphContainerSelector ){
               pnp.handle(d.property(), true);
             }
           }
+          // call handle (might need to do graph.update after handle) 
+          var fah = graph.options().filterAndHandle();
+          // alert("I was able to instantiate filterAndHandle");
+
+          if(fah.enabled() === true) {
+            // alert("I was able to determine a click!");
+            if(d.id) { // this is a node, handle by calling filterAndHandle.handle
+              fah.handle(d, true);
+            }
+          graph.update();
+          }
         }
       });
     
@@ -716,7 +727,6 @@ module.exports = function ( graphContainerSelector ){
     }
     
     nodeElements.on("click", function ( clickedNode ){
-      
       // manaual double clicker // helper for iphone 6 etc...
       if ( touchDevice === true && doubletap() === true ) {
         d3.event.stopPropagation();
