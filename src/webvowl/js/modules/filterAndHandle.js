@@ -10,7 +10,9 @@ module.exports = function (){
     filteredNodes,
     filteredProperties;
   
-  var importantNodes = ["flood", "coastal flood"]
+  var unfilteredNodes, unfilteredProperties;
+  var importantNodes = ["flood", "coastal flood"];
+  var timesFiltered = 1;
   
   /**
    * If enabled, all datatypes and literals including connected properties are filtered.
@@ -20,6 +22,29 @@ module.exports = function (){
   filter.filter = function ( untouchedNodes, untouchedProperties ){
     nodes = untouchedNodes;
     properties = untouchedProperties;
+
+    alert(JSON.stringify("I've been called: " + timesFiltered + " times"));
+    if(timesFiltered <= 1) {
+      unfilteredNodes = untouchedNodes;
+      unfilteredProperties = untouchedProperties;
+
+      //for each node, check if it is "flood", then print the initial,
+      //unfiltered node link amount
+      unfilteredNodes.forEach(function(node) {
+        if(node.labelForCurrentLanguage() == "flood") {
+          var unfilteredNodeLinks = node.links();
+          var numberOfLinks = 0;
+          unfilteredNodeLinks.forEach(function(link) {
+            numberOfLinks++;
+          });
+          alert(JSON.stringify("Number of links in flood node: " + numberOfLinks));
+        }     
+      });
+    }    
+
+    //increase number of times filtered
+    timesFiltered++;
+
     
     if ( this.enabled() ) {
         removeDatatypesAndLiterals();
@@ -47,38 +72,24 @@ module.exports = function (){
     if(elementTools.isNode(selection)) {
       nodeLinks = selection.links();
       alert("Clicked: " + selection.labelForCurrentLanguage());
-      // var propValue;
-      // for(var nodeLink in nodeLinks) {
-      //     propValue = nodeLinks[nodeLink]
 
-      //     alert(JSON.stringify(getMethods(propValue.label()).join("\n")));
-      //     // alert(JSON.stringify(propValue.label().applyFixedLocationAttributes()));
+      // NOTE link.range() and link.domain() provide the node link target
+      // and link source respectively
 
-      // }
-      // // for(link in nodeLinks) {
-      //   alert(JSON.stringify(link)
-      // }
-      // alert(JSON.stringify(nodeLinks[0].range()));
-      // alert(JSON.stringify(nodeLinks[1].range()));
-      // alert(JSON.stringify(nodeLinks[2].range()));
-      // alert(JSON.stringify(nodeLinks[3].range()));
-
-      // alert(JSON.stringify(nodeLinks.nodes()));
-
-
-      // alert(JSON.stringify(nodeLinks.count);
-      // if()
-      // for(i = 0; i < nodeLinks.length; i++) {
-      //   // lg = nodeLinks[i].pathObj();
-      //   // pathLen = Math.floor(lg.node().getTotalLength());
-      //   // node1 = lg.node().getPointAtLength(pathLen - 4);
-      //   // node2 = lg.node().getPointAtLength(pathLen)
-      //   // alert(node1.labelForCurrentLanguage());
-      //   // alert(node2.labelForCurrentLanguage());
-      //   // alert(JSON.stringify(nodeLinks[i].range()));
-
-      //   // alert(JSON.stringify(nodeLinks[i].property().labelForCurrentLanguage()));
-      // }
+      //iterarte through "unfiltered" nodes, note that at this point the
+      //number of links have already been filtered.
+      //TODO: need a way to save the original state of the 
+      //unfiltered nodes
+      unfilteredNodes.forEach(function(node) {
+        if(node.labelForCurrentLanguage() == selection.labelForCurrentLanguage()) {
+          var unfilteredNodeLinks = node.links();
+          var numberOfLinks = 0;
+          unfilteredNodeLinks.forEach(function(link) {
+            numberOfLinks++;
+          });
+          alert(JSON.stringify("Number of links in " + node.labelForCurrentLanguage() + " node: " + numberOfLinks));
+        }     
+      });
     }
   }
   
