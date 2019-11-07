@@ -23,7 +23,7 @@ module.exports = function (){
     nodes = untouchedNodes;
     properties = untouchedProperties;
 
-    alert(JSON.stringify("I've been called: " + timesFiltered + " times"));
+    alert(JSON.stringify("Filter method has been called: " + timesFiltered + " times"));
     if(timesFiltered <= 1) {
       unfilteredNodes = untouchedNodes;
       unfilteredProperties = untouchedProperties;
