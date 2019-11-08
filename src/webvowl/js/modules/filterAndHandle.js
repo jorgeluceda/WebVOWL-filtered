@@ -112,6 +112,9 @@ module.exports = function (){
     return filter;
   };
   
+  filter.reset = function () {
+    importantNodes = ["232", "105"];
+  }
   
   // Functions a filter must have
   filter.filteredNodes = function (){
