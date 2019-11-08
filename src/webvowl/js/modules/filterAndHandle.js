@@ -11,7 +11,8 @@ module.exports = function (){
     filteredProperties;
   
   var unfilteredNodes, unfilteredProperties;
-  var importantNodes = ["flood", "coastal flood"];
+  //considering "flash foods" and "flash flooding" as important nodes for now
+  var importantNodes = ["232", "105"];
   var timesFiltered = 1;
   
   /**
@@ -23,35 +24,10 @@ module.exports = function (){
     nodes = untouchedNodes;
     properties = untouchedProperties;
 
-    // alert(JSON.stringify("Filter method has been called: " + timesFiltered + " times"));
-
-    // nodes.forEach(function(node) {
-    //   if(node.labelForCurrentLanguage() == "flood") {
-    //     var unfilteredNodeLinks = node.links();
-    //     var numberOfLinks = 0;
-    //     unfilteredNodeLinks.forEach(function(link) {
-    //       numberOfLinks++;
-    //     });
-    //     alert(JSON.stringify("Number of links in flood node: " + numberOfLinks));
-    //   }     
-    // });
     if(timesFiltered <= 1) {
       unfilteredNodes = untouchedNodes;
       unfilteredProperties = untouchedProperties;
     }
-    //   //for each node, check if it is "flood", then print the initial,
-    //   //unfiltered node link amount
-    //   unfilteredNodes.forEach(function(node) {
-    //     if(node.labelForCurrentLanguage() == "flood") {
-    //       var unfilteredNodeLinks = node.links();
-    //       var numberOfLinks = 0;
-    //       unfilteredNodeLinks.forEach(function(link) {
-    //         numberOfLinks++;
-    //       });
-    //       alert(JSON.stringify("Number of links in flood node: " + numberOfLinks));
-    //     }     
-    //   });
-    // }    
 
     //increase number of times filtered
     timesFiltered++;
@@ -77,59 +53,23 @@ module.exports = function (){
 
     if(elementTools.isNode(selection)) {
       nodeLinks = selection.links();
-      alert("Clicked: " + selection.labelForCurrentLanguage());
-
-      // NOTE link.range() and link.domain() provide the node link target
-      // and link source respectively
-
-      //iterarte through "unfiltered" nodes, note that at this point the
-      //number of links have already been filtered.
-      //TODO: need a way to save the original state of the 
-      //unfiltered nodes
-      var amtLinks = 0;
-      // var amtNodes = 0;
-
-
-      // unfilteredNodes.forEach(function(node) {
-      //   var unfilteredNodeLinks = node.links();
-      //   if(node.labelForCurrentLanguage() == selection.labelForCurrentLanguage()) {
-      //     unfilteredNodeLinks.forEach(function(link) {
-      //       alert(JSON.stringify(link.domain().labelForCurrentLanguage()))
-      //       alert(JSON.stringify(link.range().labelForCurrentLanguage()))
-      //     });
-      //   }
-      // });
-
+      
+      //working handler on click! 
       unfilteredProperties.forEach(function(property) {
-        if(property.domain().labelForCurrentLanguage() == selection.labelForCurrentLanguage() ||
-          property.range().labelForCurrentLanguage() == selection.labelForCurrentLanguage()) {
-          alert(JSON.stringify(i + "th property domain: " + property.domain().labelForCurrentLanguage()));
-          alert(JSON.stringify(i + "th property range: " + property.range().labelForCurrentLanguage()));
-          amtLinks++;
+        if(property.domain().id() == selection.id() ||
+          property.range().id() == selection.id()) {
+
+          // TO REVIEW: right now it is pushing no matter if the 
+          // node is a child or parent of that selection
+          // NOTE: comment the else statement if want only children of the nodes
+          if(property.domain().id() == selection.id()) {
+              importantNodes.push(property.range().id());
+          }
+           else {
+              importantNodes.push(property.domain().id());
+          }
         }
       });
-
-      alert(JSON.stringify("Amount of links: " + amtLinks));
-      // for(i = 0; i < properties.length; i++) {
-      //   var domain = properties[i].domain();
-      //   var range = properties[i].range();
-      //   alert(JSON.stringify(i + "th property domain: " + domain.labelForCurrentLanguage()));
-      //   alert(JSON.stringify(i + "th property range: " + range.labelForCurrentLanguage()));
-
-      // }
-      // alert(JSON.stringify("amount of nodes " + amtNodes));
-      // alert(JSON.stringify("amount of links in flood node: " + amtLinks));
-      // alert(JSON.stringify(nodes.links().length));
-      // nodes.forEach(function(node) {
-      //   if(node.labelForCurrentLanguage() == selection.labelForCurrentLanguage()) {
-      //     var unfilteredNodeLinks = node.links();
-      //     var numberOfLinks = 0;
-      //     unfilteredNodeLinks.forEach(function(link) {
-      //       numberOfLinks++;
-      //     });
-      //     alert(JSON.stringify("Number of links in " + node.labelForCurrentLanguage() + " node: " + numberOfLinks));
-      //   }     
-      // });
     }
   }
 
@@ -158,7 +98,7 @@ module.exports = function (){
     var isImportant = false;
     //find out if the node is important
     for(i = 0; i < importantNodes.length; i++) {
-      if(node.labelForCurrentLanguage() == importantNodes[i]) {
+      if(node.id() == importantNodes[i]) {
         isImportant = true;
       } 
     }
