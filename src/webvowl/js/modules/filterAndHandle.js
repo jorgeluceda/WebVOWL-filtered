@@ -23,24 +23,35 @@ module.exports = function (){
     nodes = untouchedNodes;
     properties = untouchedProperties;
 
-    alert(JSON.stringify("Filter method has been called: " + timesFiltered + " times"));
+    // alert(JSON.stringify("Filter method has been called: " + timesFiltered + " times"));
+
+    // nodes.forEach(function(node) {
+    //   if(node.labelForCurrentLanguage() == "flood") {
+    //     var unfilteredNodeLinks = node.links();
+    //     var numberOfLinks = 0;
+    //     unfilteredNodeLinks.forEach(function(link) {
+    //       numberOfLinks++;
+    //     });
+    //     alert(JSON.stringify("Number of links in flood node: " + numberOfLinks));
+    //   }     
+    // });
     if(timesFiltered <= 1) {
       unfilteredNodes = untouchedNodes;
       unfilteredProperties = untouchedProperties;
-
-      //for each node, check if it is "flood", then print the initial,
-      //unfiltered node link amount
-      unfilteredNodes.forEach(function(node) {
-        if(node.labelForCurrentLanguage() == "flood") {
-          var unfilteredNodeLinks = node.links();
-          var numberOfLinks = 0;
-          unfilteredNodeLinks.forEach(function(link) {
-            numberOfLinks++;
-          });
-          alert(JSON.stringify("Number of links in flood node: " + numberOfLinks));
-        }     
-      });
-    }    
+    }
+    //   //for each node, check if it is "flood", then print the initial,
+    //   //unfiltered node link amount
+    //   unfilteredNodes.forEach(function(node) {
+    //     if(node.labelForCurrentLanguage() == "flood") {
+    //       var unfilteredNodeLinks = node.links();
+    //       var numberOfLinks = 0;
+    //       unfilteredNodeLinks.forEach(function(link) {
+    //         numberOfLinks++;
+    //       });
+    //       alert(JSON.stringify("Number of links in flood node: " + numberOfLinks));
+    //     }     
+    //   });
+    // }    
 
     //increase number of times filtered
     timesFiltered++;
@@ -59,16 +70,11 @@ module.exports = function (){
    * @param selection
    * @param forced
    */
-  filter.handle = function( selection, forced ) {
+  filter.handle = function( selection ) {
     if(!enabled) {
       return;
     }
 
-    if(!forced) {
-      if(wasNotDragged()) {
-        return;
-      }
-    }
     if(elementTools.isNode(selection)) {
       nodeLinks = selection.links();
       alert("Clicked: " + selection.labelForCurrentLanguage());
@@ -80,19 +86,52 @@ module.exports = function (){
       //number of links have already been filtered.
       //TODO: need a way to save the original state of the 
       //unfiltered nodes
-      unfilteredNodes.forEach(function(node) {
-        if(node.labelForCurrentLanguage() == selection.labelForCurrentLanguage()) {
-          var unfilteredNodeLinks = node.links();
-          var numberOfLinks = 0;
-          unfilteredNodeLinks.forEach(function(link) {
-            numberOfLinks++;
-          });
-          alert(JSON.stringify("Number of links in " + node.labelForCurrentLanguage() + " node: " + numberOfLinks));
-        }     
+      var amtLinks = 0;
+      // var amtNodes = 0;
+
+
+      // unfilteredNodes.forEach(function(node) {
+      //   var unfilteredNodeLinks = node.links();
+      //   if(node.labelForCurrentLanguage() == selection.labelForCurrentLanguage()) {
+      //     unfilteredNodeLinks.forEach(function(link) {
+      //       alert(JSON.stringify(link.domain().labelForCurrentLanguage()))
+      //       alert(JSON.stringify(link.range().labelForCurrentLanguage()))
+      //     });
+      //   }
+      // });
+
+      unfilteredProperties.forEach(function(property) {
+        if(property.domain().labelForCurrentLanguage() == selection.labelForCurrentLanguage() ||
+          property.range().labelForCurrentLanguage() == selection.labelForCurrentLanguage()) {
+          alert(JSON.stringify(i + "th property domain: " + property.domain().labelForCurrentLanguage()));
+          alert(JSON.stringify(i + "th property range: " + property.range().labelForCurrentLanguage()));
+          amtLinks++;
+        }
       });
+
+      alert(JSON.stringify("Amount of links: " + amtLinks));
+      // for(i = 0; i < properties.length; i++) {
+      //   var domain = properties[i].domain();
+      //   var range = properties[i].range();
+      //   alert(JSON.stringify(i + "th property domain: " + domain.labelForCurrentLanguage()));
+      //   alert(JSON.stringify(i + "th property range: " + range.labelForCurrentLanguage()));
+
+      // }
+      // alert(JSON.stringify("amount of nodes " + amtNodes));
+      // alert(JSON.stringify("amount of links in flood node: " + amtLinks));
+      // alert(JSON.stringify(nodes.links().length));
+      // nodes.forEach(function(node) {
+      //   if(node.labelForCurrentLanguage() == selection.labelForCurrentLanguage()) {
+      //     var unfilteredNodeLinks = node.links();
+      //     var numberOfLinks = 0;
+      //     unfilteredNodeLinks.forEach(function(link) {
+      //       numberOfLinks++;
+      //     });
+      //     alert(JSON.stringify("Number of links in " + node.labelForCurrentLanguage() + " node: " + numberOfLinks));
+      //   }     
+      // });
     }
   }
-  
 
   function getMethods(obj) {
     var result = [];
