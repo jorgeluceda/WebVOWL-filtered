@@ -199,6 +199,11 @@ module.exports = function ( graph ){
     
     setSliderValue(degreeSlider, 0);
     degreeSlider.on("change")();
+
+    //reset to only use important nodes, and update graph to display
+    //only important nodes
+    graph.options().filterAndHandle().reset();
+    graph.update();
   };
   
   function addAnimationFinishedListener(){
