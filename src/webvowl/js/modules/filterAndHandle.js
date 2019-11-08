@@ -11,7 +11,8 @@ module.exports = function (){
     filteredProperties;
   
   var unfilteredNodes, unfilteredProperties;
-  var importantNodes = ["flood", "coastal flood"];
+  //considering "flash foods" and "flash flooding" as important nodes for now
+  var importantNodes = ["232", "105"];
   var timesFiltered = 1;
   
   /**
@@ -23,24 +24,10 @@ module.exports = function (){
     nodes = untouchedNodes;
     properties = untouchedProperties;
 
-    alert(JSON.stringify("Filter method has been called: " + timesFiltered + " times"));
     if(timesFiltered <= 1) {
       unfilteredNodes = untouchedNodes;
       unfilteredProperties = untouchedProperties;
-
-      //for each node, check if it is "flood", then print the initial,
-      //unfiltered node link amount
-      unfilteredNodes.forEach(function(node) {
-        if(node.labelForCurrentLanguage() == "flood") {
-          var unfilteredNodeLinks = node.links();
-          var numberOfLinks = 0;
-          unfilteredNodeLinks.forEach(function(link) {
-            numberOfLinks++;
-          });
-          alert(JSON.stringify("Number of links in flood node: " + numberOfLinks));
-        }     
-      });
-    }    
+    }
 
     //increase number of times filtered
     timesFiltered++;
@@ -59,40 +46,32 @@ module.exports = function (){
    * @param selection
    * @param forced
    */
-  filter.handle = function( selection, forced ) {
+  filter.handle = function( selection ) {
     if(!enabled) {
       return;
     }
 
-    if(!forced) {
-      if(wasNotDragged()) {
-        return;
-      }
-    }
     if(elementTools.isNode(selection)) {
       nodeLinks = selection.links();
-      alert("Clicked: " + selection.labelForCurrentLanguage());
+      
+      //working handler on click! 
+      unfilteredProperties.forEach(function(property) {
+        if(property.domain().id() == selection.id() ||
+          property.range().id() == selection.id()) {
 
-      // NOTE link.range() and link.domain() provide the node link target
-      // and link source respectively
-
-      //iterarte through "unfiltered" nodes, note that at this point the
-      //number of links have already been filtered.
-      //TODO: need a way to save the original state of the 
-      //unfiltered nodes
-      unfilteredNodes.forEach(function(node) {
-        if(node.labelForCurrentLanguage() == selection.labelForCurrentLanguage()) {
-          var unfilteredNodeLinks = node.links();
-          var numberOfLinks = 0;
-          unfilteredNodeLinks.forEach(function(link) {
-            numberOfLinks++;
-          });
-          alert(JSON.stringify("Number of links in " + node.labelForCurrentLanguage() + " node: " + numberOfLinks));
-        }     
+          // TO REVIEW: right now it is pushing no matter if the 
+          // node is a child or parent of that selection
+          // NOTE: comment the else statement if want only children of the nodes
+          if(property.domain().id() == selection.id()) {
+              importantNodes.push(property.range().id());
+          }
+           else {
+              importantNodes.push(property.domain().id());
+          }
+        }
       });
     }
   }
-  
 
   function getMethods(obj) {
     var result = [];
@@ -119,7 +98,7 @@ module.exports = function (){
     var isImportant = false;
     //find out if the node is important
     for(i = 0; i < importantNodes.length; i++) {
-      if(node.labelForCurrentLanguage() == importantNodes[i]) {
+      if(node.id() == importantNodes[i]) {
         isImportant = true;
       } 
     }

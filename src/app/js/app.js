@@ -192,7 +192,8 @@ module.exports = function (){
     options.selectionModules().push(focuser);
     options.selectionModules().push(selectionDetailDisplayer);
     options.selectionModules().push(pickAndPin);
-    
+    // options.selectionModules().push(filterAndHandle);
+
     options.filterModules().push(emptyLiteralFilter);
     options.filterModules().push(statistics);
     
