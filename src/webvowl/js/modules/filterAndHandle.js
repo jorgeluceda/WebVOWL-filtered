@@ -113,9 +113,7 @@ module.exports = function (){
   };
   
   filter.reset = function () {
-    alert("I GOT HERE!");
     importantNodes = ["232", "105"];
-    alert(JSON.stringify(importantNodes));
   }
   
   // Functions a filter must have
