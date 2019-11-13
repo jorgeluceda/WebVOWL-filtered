@@ -90,6 +90,10 @@ module.exports = function ( graph ){
       if ( silent !== true ) {
         // updating graph when silent is false or the parameter is not given.
         graph.update();
+
+        // use dynamic zooming after updating graph
+        graph.options().navigationMenu().hideAllMenus();
+        graph.forceRelocationEvent(true);
       }
     });
     
