@@ -407,11 +407,12 @@ module.exports = function ( graphContainerSelector ){
               pnp.handle(d.property(), true);
             }
           }
+
           // call handle (might need to do graph.update after handle) 
           var fah = graph.options().filterAndHandle();
           // alert("I was able to instantiate filterAndHandle");
 
-          if(fah.enabled() === true) {
+          if(fah.enabled() === true && moved === false) {
             // alert("I was able to determine a click!");
             if(d.id) { // this is a node, handle by calling filterAndHandle.handle
               fah.handle(d, true);
