@@ -12,7 +12,7 @@ module.exports = function (){
   
   var unfilteredNodes, unfilteredProperties;
   //considering "flash foods" and "flash flooding" as important nodes for now
-  var importantNodes = ["232", "105"];
+  var importantNodes = ["232", "105", "226"];
   var timesFiltered = 1;
   
   /**
@@ -28,15 +28,13 @@ module.exports = function (){
       unfilteredNodes = untouchedNodes;
       unfilteredProperties = untouchedProperties;
     }
-
     //increase number of times filtered
     timesFiltered++;
-
-    
+  
     if ( this.enabled() ) {
-        removeDatatypesAndLiterals();
+      removeDatatypesAndLiterals();
     }
-    
+
     filteredNodes = nodes;
     filteredProperties = properties;
   };
@@ -52,40 +50,27 @@ module.exports = function (){
     }
 
     if(elementTools.isNode(selection)) {
-      nodeLinks = selection.links();
-      
-      //working handler on click! 
-      unfilteredProperties.forEach(function(property) {
-        if(property.domain().id() == selection.id() ||
-          property.range().id() == selection.id()) {
-
-          // TO REVIEW: right now it is pushing no matter if the 
-          // node is a child or parent of that selection
-          // NOTE: comment the else statement if want only children of the nodes
-          if(property.domain().id() == selection.id()) {
-              importantNodes.push(property.range().id());
-          }
-           else {
-              importantNodes.push(property.domain().id());
-          }
+      var nodeLinks = selection.links();
+      var unfilteredNodeLinks;
+      unfilteredNodes.forEach(function(node) {
+        if(node.id() == selection.id()) {
+          unfilteredNodeLinks = node.links();
         }
       });
+
+      var linkCounter = 0;
+      unfilteredNodeLinks.forEach(function(link) {
+        importantNodes.push(link.domain().id());
+        alert(JSON.stringify("Node being pushed: " + link.range().id()));
+        alert(JSON.stringify(importantNodes));
+        linkCounter++;
+      });
+    
+      alert(JSON.stringify("Amount of links: " + linkCounter));
+
     }
   }
 
-  function getMethods(obj) {
-    var result = [];
-    for (var id in obj) {
-      try {
-        if (typeof(obj[id]) == "function") {
-          result.push(id + ": " + obj[id].toString());
-        }
-      } catch (err) {
-        result.push(id + ": inaccessible");
-      }
-    }
-    return result;
-  }
   function removeDatatypesAndLiterals(){
     var filteredData = filterTools.filterNodesAndTidy(nodes, properties, isImportantNode);
     
@@ -94,7 +79,6 @@ module.exports = function (){
   }
   
   function isImportantNode( node ){
-
     var isImportant = false;
     //find out if the node is important
     for(i = 0; i < importantNodes.length; i++) {
@@ -102,7 +86,6 @@ module.exports = function (){
         isImportant = true;
       } 
     }
-
     return isImportant;
   }
   
@@ -128,3 +111,24 @@ module.exports = function (){
   
   return filter;
 };
+
+// PREVIOUS METHOD USING UNFILTERED PROPERTIES THAT 
+// CORRECTLY INSERTED NODES TO GRAPH
+// unfilteredProperties.forEach(function(property) {
+//   if(property.domain().id() == selection.id() ||
+//     property.range().id() == selection.id()) {
+
+//     // NOTE: comment the else statement if want only children of the nodes
+//     if(property.domain().id() == selection.id()) {
+
+//       property.range().collapsible(true);
+//       selection.collapsible(false);
+//       importantNodes.push(property.range().id());
+//     }
+//      else {
+//       property.domain().collapsible(true);
+//       selection.collapsible(false);
+//       importantNodes.push(property.domain().id());
+//     }
+//   }
+// });
