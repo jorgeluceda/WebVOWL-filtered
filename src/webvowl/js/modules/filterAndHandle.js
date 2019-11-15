@@ -1,8 +1,10 @@
 var elementTools = require("../util/elementTools")();
 var filterTools = require("../util/filterTools")();
 
+// filterAndHandle function
+// Note: using node.collapsible property to mean a node
+//       is expandable instead.
 module.exports = function (){
-  
   var filter = {},
     nodes,
     properties,
@@ -12,8 +14,10 @@ module.exports = function (){
   
   var unfilteredNodes, unfilteredProperties;
   //considering "flash foods" and "flash flooding" as important nodes for now
-  var importantNodes = ["232", "105", "226"];
+  var importantNodes = ["232", "226", "105"];
   var timesFiltered = 1;
+  var handled = false;
+  var currentNode;
   
   /**
    * If enabled, all datatypes and literals including connected properties are filtered.
@@ -27,7 +31,30 @@ module.exports = function (){
     if(timesFiltered <= 1) {
       unfilteredNodes = untouchedNodes;
       unfilteredProperties = untouchedProperties;
+
+      unfilteredNodes.forEach( function(node) {
+        //set the other nodes displayed that are
+        //not initially expanded to be expandable
+        if(node.id() == importantNodes[1] || 
+            node.id() == importantNodes[2]) {
+          node.collapsible(true);
+        }
+      }); 
     }
+
+    if(handled) {
+      currentNode.links().forEach(function(currentNodeLink) {
+        if(importantNodes.includes(currentNodeLink.range().id())) {
+          currentNodeLink.range().collapsible(false);
+        } 
+        if(importantNodes.includes(currentNodeLink.domain().id())) {
+          currentNodeLink.domain().collapsible(false);
+        }
+      });
+
+      handled = false;
+    }
+
     //increase number of times filtered
     timesFiltered++;
   
@@ -49,24 +76,37 @@ module.exports = function (){
       return;
     }
 
+    handled = true;
+
     if(elementTools.isNode(selection)) {
-      var nodeLinks = selection.links();
-      var unfilteredNodeLinks;
+
       unfilteredNodes.forEach(function(node) {
         if(node.id() == selection.id()) {
           unfilteredNodeLinks = node.links();
         }
       });
 
-      var linkCounter = 0;
-      unfilteredNodeLinks.forEach(function(link) {
-        importantNodes.push(link.domain().id());
-        alert(JSON.stringify("Node being pushed: " + link.range().id()));
-        alert(JSON.stringify(importantNodes));
-        linkCounter++;
+      unfilteredProperties.forEach(function(property) {
+        //push if it is not an important node
+        if(!importantNodes.includes(property.domain().id()) ||
+            !importantNodes.includes(property.range().id())) {
+
+          if(property.domain().id() == selection.id()) {
+
+            property.range().collapsible(true);
+            selection.collapsible(false);
+            importantNodes.push(property.range().id());
+            currentNode = property.range();
+          }
+          if(property.range().id() == selection.id()) {
+            property.domain().collapsible(true);
+            selection.collapsible(false);
+            importantNodes.push(property.domain().id());
+            currentNode = property.domain();
+          }
+
+        }
       });
-    
-      alert(JSON.stringify("Amount of links: " + linkCounter));
 
     }
   }
@@ -96,7 +136,7 @@ module.exports = function (){
   };
   
   filter.reset = function () {
-    importantNodes = ["232", "105"];
+    importantNodes = ["232", "226", "105"];
   }
   
   // Functions a filter must have

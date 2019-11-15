@@ -31,7 +31,8 @@ module.exports = function ( menu ){
       degreeSetter(defaultDegree);
       if ( defaultDegree > 0 ) {
         menu.highlightForDegreeSlider(true);
-        menu.getGraphObject().setFilterWarning(true);
+        // don't set filter warning for our EnvoScholar app
+        // menu.getGraphObject().setFilterWarning(true);
         
       }
     } else {
