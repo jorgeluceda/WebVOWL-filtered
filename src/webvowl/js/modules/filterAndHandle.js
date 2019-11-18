@@ -204,6 +204,11 @@ module.exports = function (graph){
   
   filter.reset = function () {
     importantNodes = ["232", "226", "105"];
+    node.forEach(function(node) {
+      if(node.id() == importantNodes[1] || node.id() == importantNodes[2]) {
+        node.collapsible(true);
+      }
+    });
   }
   
   // Functions a filter must have
