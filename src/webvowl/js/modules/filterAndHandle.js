@@ -78,7 +78,7 @@ module.exports = function (graph){
 
     //include nodes pushed via searchMenu
     if(graph.options().searchMenu().getPushedNode() != "") {
-      importantNodes.push(graph.options().searchMenu().getPushedNode());
+      importantNodes.push(graph.options().searchMenu().getPushedNode(), true);
 
       searchMenuPushed = true;
     }
@@ -86,8 +86,10 @@ module.exports = function (graph){
     if(searchMenuPushed == true) {
       nodes.forEach(function (node) {
         if(node.id() == graph.options().searchMenu().getPushedNode()) {
-          node.collapsible(true);
+          setExpandables(graph.options().searchMenu().getPushedNode(), true);
+
           graph.options().searchMenu().resetPushedNode();
+
           searchMenuPushed = false;
         }
       });
@@ -108,7 +110,7 @@ module.exports = function (graph){
 
     if(elementTools.isNode(selection)) {
       selection.collapsible(false);
-
+      currentNodeLinks[selection.id()] = selection.links().length;
       selection.links().forEach(function(link) {
         if(link.domain().id() == selection.id()) {
           currentNodeLinks[link.range().id()] = link.range().links().length;
@@ -118,6 +120,9 @@ module.exports = function (graph){
           currentNodeLinks[link.domain().id()] = link.domain().links().length;
         }
       });
+
+      selection.collapsible(false);
+
       currentSelection = selection;
       handled = true;
       //update graph to reset filter
@@ -131,7 +136,14 @@ module.exports = function (graph){
     nodes.forEach(function(node) {
 
       if(node.id() == selectionID) {
-        node.collapsible(selectionExpandable);
+        if(selectionExpandable == true) {
+          if(currentNodeLinks[selectionID] < node.links().length) {
+            node.collapsible(true);
+          } else { node.collapsible(false); };
+        } else {
+          node.collapsible(selectionExpandable);
+
+        }
         node.links().forEach(function(link) {
           if(node.id() == link.domain().id() || node.id() == link.range().id()) {
             if(currentNodeLinks[link.domain().id()] < link.domain().links().length) {
@@ -147,6 +159,8 @@ module.exports = function (graph){
             }
           }
         });
+        node.collapsible(selectionExpandable);
+
       }
     });
   }
@@ -200,7 +214,6 @@ module.exports = function (graph){
   filter.filteredProperties = function (){
     return filteredProperties;
   };
-  
   
   return filter;
 };
