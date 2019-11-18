@@ -113,7 +113,7 @@ module.exports = function ( graph ){
     });
     
     nodeDegreeFilter.setDegreeSetter(function ( value ){
-      setSliderValue(degreeSlider, value);
+      setSliderValue(degreeSlider, 0);
     });
     
     var sliderContainer,

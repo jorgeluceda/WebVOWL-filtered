@@ -412,12 +412,18 @@ module.exports = function ( graphContainerSelector ){
           var fah = graph.options().filterAndHandle();
           // alert("I was able to instantiate filterAndHandle");
 
-          if(fah.enabled() === true && moved === false) {
+          if(fah.enabled() === true) {
             // alert("I was able to determine a click!");
             if(d.id) { // this is a node, handle by calling filterAndHandle.handle
               fah.handle(d, true);
             }
             
+            graph.update();
+
+            if(d.id) { // this is a node, handle by calling filterAndHandle.handle
+              fah.handle(d, true);
+            }
+
             graph.update();
             // use dynamic zooming after updating graph
             graph.options().navigationMenu().hideAllMenus();
