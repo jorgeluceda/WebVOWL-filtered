@@ -23,6 +23,10 @@ module.exports = function (graph){
   handled = false;
   var currentSelection;
 
+  //e.g.: {<node_id> : <node_link_length> }
+  var currentSelectionLinks = {};
+
+
   /**
    * If enabled, all datatypes and literals including connected properties are filtered.
    * @param untouchedNodes
@@ -52,17 +56,25 @@ module.exports = function (graph){
     }
 
     if(handled == true) {
+      //only iterates over the graphed nodes, but the ungraphed
+      //node links are intact.
       nodes.forEach(function(node) {
         if(node.id() == currentSelection.id()) {
-          //make node important so its displayed
           pushNodes(node);
-          //TODO: check if node has hidden nodes or not
+          
         }
       });
+
     }
 
     filteredNodes = nodes;
     filteredProperties = properties;
+
+    if(timesFiltered > 5) {
+      if(handled == true) {
+        setExpandables();
+      }
+    }
     handled = false;
   };
 
@@ -79,6 +91,15 @@ module.exports = function (graph){
     if(elementTools.isNode(selection)) {
       selection.collapsible(false);
 
+      selection.links().forEach(function(link) {
+        if(link.domain().id() == selection.id()) {
+          currentSelectionLinks[link.range().id()] = link.range().links().length;
+        }
+
+        if(link.range().id() == selection.id()) {
+          currentSelectionLinks[link.domain().id()] = link.domain().links().length;
+        }
+      });
       currentSelection = selection;
       handled = true;
       //update graph to reset filter
@@ -86,9 +107,37 @@ module.exports = function (graph){
     }
   }
 
+
+  function setExpandables() {
+    currentSelection.collapsible(false);
+
+    nodes.forEach(function(node) {
+
+      if(node.id() == currentSelection.id()) {
+        node.links().forEach(function(link) {
+          if(node.id() == link.domain().id() || node.id() == link.range().id()) {
+            if(currentSelectionLinks[link.domain().id()] < link.domain().links().length) {
+              link.domain().collapsible(true);
+            } else {
+              link.domain().collapsible(false);
+            }
+
+            if(currentSelectionLinks[link.range().id()] < link.range().links().length) {
+              link.range().collapsible(true);
+            } else {
+              link.range().collapsible(false);
+
+            }
+          }
+        });
+      }
+    });
+
+    currentSelection.collapsible(false);
+
+  }
   function pushNodes(selection) {
     var links = selection.links();
-    
     links.forEach(function(link) {
       if(!importantNodes.includes(link.domain().id())) {
         importantNodes.push(link.domain().id());
