@@ -21,10 +21,11 @@ module.exports = function (graph){
   var importantNodes = ["232", "226", "105"];
   var timesFiltered = 1;
   handled = false;
+  searchMenuPushed = false;
   var currentSelection;
 
   //e.g.: {<node_id> : <node_link_length> }
-  var currentSelectionLinks = {};
+  var currentNodeLinks = {};
 
 
   /**
@@ -61,7 +62,6 @@ module.exports = function (graph){
       nodes.forEach(function(node) {
         if(node.id() == currentSelection.id()) {
           pushNodes(node);
-          
         }
       });
 
@@ -72,9 +72,27 @@ module.exports = function (graph){
 
     if(timesFiltered > 5) {
       if(handled == true) {
-        setExpandables();
+        setExpandables(currentSelection.id(), false);
       }
     }
+
+    //include nodes pushed via searchMenu
+    if(graph.options().searchMenu().getPushedNode() != "") {
+      importantNodes.push(graph.options().searchMenu().getPushedNode());
+
+      searchMenuPushed = true;
+    }
+
+    if(searchMenuPushed == true) {
+      nodes.forEach(function (node) {
+        if(node.id() == graph.options().searchMenu().getPushedNode()) {
+          node.collapsible(true);
+          graph.options().searchMenu().resetPushedNode();
+          searchMenuPushed = false;
+        }
+      });
+    }
+
     handled = false;
   };
 
@@ -93,11 +111,11 @@ module.exports = function (graph){
 
       selection.links().forEach(function(link) {
         if(link.domain().id() == selection.id()) {
-          currentSelectionLinks[link.range().id()] = link.range().links().length;
+          currentNodeLinks[link.range().id()] = link.range().links().length;
         }
 
         if(link.range().id() == selection.id()) {
-          currentSelectionLinks[link.domain().id()] = link.domain().links().length;
+          currentNodeLinks[link.domain().id()] = link.domain().links().length;
         }
       });
       currentSelection = selection;
@@ -108,34 +126,31 @@ module.exports = function (graph){
   }
 
 
-  function setExpandables() {
-    currentSelection.collapsible(false);
+  function setExpandables(selectionID, selectionExpandable) {
 
     nodes.forEach(function(node) {
 
-      if(node.id() == currentSelection.id()) {
+      if(node.id() == selectionID) {
+        node.collapsible(selectionExpandable);
         node.links().forEach(function(link) {
           if(node.id() == link.domain().id() || node.id() == link.range().id()) {
-            if(currentSelectionLinks[link.domain().id()] < link.domain().links().length) {
+            if(currentNodeLinks[link.domain().id()] < link.domain().links().length) {
               link.domain().collapsible(true);
             } else {
               link.domain().collapsible(false);
             }
 
-            if(currentSelectionLinks[link.range().id()] < link.range().links().length) {
+            if(currentNodeLinks[link.range().id()] < link.range().links().length) {
               link.range().collapsible(true);
             } else {
               link.range().collapsible(false);
-
             }
           }
         });
       }
     });
-
-    currentSelection.collapsible(false);
-
   }
+
   function pushNodes(selection) {
     var links = selection.links();
     links.forEach(function(link) {

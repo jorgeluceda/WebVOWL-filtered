@@ -16,6 +16,8 @@ module.exports = function ( graph ){
     labelDictionary,
     inputText,
     viewStatusOfSearchEntries = false;
+    pushedNode = "";
+    // pushedNodeID;
   
   var results = [];
   var resultID = [];
@@ -246,6 +248,15 @@ module.exports = function ( graph ){
   searchMenu.getSearchString = function (){
     return searchLineEdit.node().value;
   };
+
+  searchMenu.getPushedNode = function (){
+    return pushedNode;
+  }
+
+  
+  searchMenu.resetPushedNode = function (){
+    pushedNode = "";
+  }
   
   
   function clearSearchEntries(){
@@ -372,6 +383,7 @@ module.exports = function ( graph ){
       //add results to the dropdown menu
       var testEntry = document.createElement('li');
       testEntry.setAttribute('elementID', newResultsIds[i]);
+
       testEntry.onclick = handleClick(newResultsIds[i]);
       testEntry.setAttribute('class', "dbEntry");
       
@@ -421,9 +433,10 @@ module.exports = function ( graph ){
       if ( eLen === 1 || allSame === true ) {
         if ( nodeMap[entries[0]] === undefined ) {
           searchEntryNode.style("color", "#979797");
-          testEntry.title = newResults[i] + "\nElement is filtered out.";
-          testEntry.onclick = function (){
-          };
+
+          testEntry.title = newResults[i] + "\nElement is filtered out, click element to show.";
+          testEntry.onclick = pushNodeOnClick(mergedIdList[newResultsIds[i]]);
+
           d3.select(testEntry).style("cursor", "default");
           filteredOutElements++;
         }
@@ -477,6 +490,21 @@ module.exports = function ( graph ){
     }
     
     searchMenu.showSearchEntries();
+  }
+
+  function pushNodeOnClick(elementId) {
+    return function() {
+      pushedNode = elementId;
+
+      //need to update twice, so that filterAndHandle can update correctly
+      graph.update();
+      graph.update();
+  
+      // use dynamic zooming after updating graph
+      graph.options().navigationMenu().hideAllMenus();
+      graph.forceRelocationEvent(true);
+    }
+
   }
   
   function handleClick( elementId ){
