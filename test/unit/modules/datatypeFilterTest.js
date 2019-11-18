@@ -24,12 +24,6 @@ describe("Collapsing of datatypes", function () {
 		filter.enabled(true);
 	});
 
-	beforeEach(function () {
-		filter = require("../../../src/webvowl/js/modules/filterAndHandle")();
-		filter.enabled(true);
-	});
-
-
 	it("should remove datatypes with their properties", function () {
 		var domain = new OwlClass(),
 			datatypeProperty = new DatatypeProperty(),

@@ -37,7 +37,7 @@ module.exports = function (){
     disjointFilter = webvowl.modules.disjointFilter(),
     emptyLiteralFilter = webvowl.modules.emptyLiteralFilter(),
     // OUR CUSTOM FILTER AND HANDLER
-    filterAndHandle = webvowl.modules.filterAndHandle(),
+    filterAndHandle = webvowl.modules.filterAndHandle(graph),
     focuser = webvowl.modules.focuser(graph),
     nodeDegreeFilter = webvowl.modules.nodeDegreeFilter(filterMenu),
     nodeScalingSwitch = webvowl.modules.nodeScalingSwitch(graph),
