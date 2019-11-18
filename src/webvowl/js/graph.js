@@ -419,6 +419,12 @@ module.exports = function ( graphContainerSelector ){
             }
             
             graph.update();
+
+            if(d.id) { // this is a node, handle by calling filterAndHandle.handle
+              fah.handle(d, true);
+            }
+
+            graph.update();
             // use dynamic zooming after updating graph
             graph.options().navigationMenu().hideAllMenus();
             graph.forceRelocationEvent(true);
