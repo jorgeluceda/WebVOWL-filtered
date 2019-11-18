@@ -1,10 +1,13 @@
 var elementTools = require("../util/elementTools")();
 var filterTools = require("../util/filterTools")();
 
-// filterAndHandle function
-// Note: using node.collapsible property to mean a node
-//       is expandable instead.
-module.exports = function (){
+/**
+ * Contains the logic for our custom FilterAndHandle functionality
+ *
+ * @param graph required for calling a refresh after a filter change
+ * @returns {{}}
+ */
+module.exports = function (graph){
   var filter = {},
     nodes,
     properties,
@@ -12,27 +15,26 @@ module.exports = function (){
     filteredNodes,
     filteredProperties;
   
-  var unfilteredNodes, unfilteredProperties;
-  //considering "flash foods" and "flash flooding" as important nodes for now
+  // considering "flash foods" and "flash flooding" as important nodes for now
+  // TODO: make dict with key:values so that we can collapse/expand objects 
+  //      on even or odd intervals
   var importantNodes = ["232", "226", "105"];
   var timesFiltered = 1;
-  var handled = false;
-  var currentNode;
-  
+  handled = false;
+  var currentSelection;
+
   /**
    * If enabled, all datatypes and literals including connected properties are filtered.
    * @param untouchedNodes
    * @param untouchedProperties
    */
   filter.filter = function ( untouchedNodes, untouchedProperties ){
+    // unfilteredData.nodes = nodes;
     nodes = untouchedNodes;
     properties = untouchedProperties;
 
     if(timesFiltered <= 1) {
-      unfilteredNodes = untouchedNodes;
-      unfilteredProperties = untouchedProperties;
-
-      unfilteredNodes.forEach( function(node) {
+      nodes.forEach( function(node) {
         //set the other nodes displayed that are
         //not initially expanded to be expandable
         if(node.id() == importantNodes[1] || 
@@ -42,19 +44,6 @@ module.exports = function (){
       }); 
     }
 
-    if(handled) {
-      currentNode.links().forEach(function(currentNodeLink) {
-        if(importantNodes.includes(currentNodeLink.range().id())) {
-          currentNodeLink.range().collapsible(false);
-        } 
-        if(importantNodes.includes(currentNodeLink.domain().id())) {
-          currentNodeLink.domain().collapsible(false);
-        }
-      });
-
-      handled = false;
-    }
-
     //increase number of times filtered
     timesFiltered++;
   
@@ -62,8 +51,19 @@ module.exports = function (){
       removeDatatypesAndLiterals();
     }
 
+    if(handled == true) {
+      nodes.forEach(function(node) {
+        if(node.id() == currentSelection.id()) {
+          //make node important so its displayed
+          pushNodes(node);
+          //TODO: check if node has hidden nodes or not
+        }
+      });
+    }
+
     filteredNodes = nodes;
     filteredProperties = properties;
+    handled = false;
   };
 
     /**
@@ -76,39 +76,28 @@ module.exports = function (){
       return;
     }
 
-    handled = true;
-
     if(elementTools.isNode(selection)) {
+      selection.collapsible(false);
 
-      unfilteredNodes.forEach(function(node) {
-        if(node.id() == selection.id()) {
-          unfilteredNodeLinks = node.links();
-        }
-      });
-
-      unfilteredProperties.forEach(function(property) {
-        //push if it is not an important node
-        if(!importantNodes.includes(property.domain().id()) ||
-            !importantNodes.includes(property.range().id())) {
-
-          if(property.domain().id() == selection.id()) {
-
-            property.range().collapsible(true);
-            selection.collapsible(false);
-            importantNodes.push(property.range().id());
-            currentNode = property.range();
-          }
-          if(property.range().id() == selection.id()) {
-            property.domain().collapsible(true);
-            selection.collapsible(false);
-            importantNodes.push(property.domain().id());
-            currentNode = property.domain();
-          }
-
-        }
-      });
-
+      currentSelection = selection;
+      handled = true;
+      //update graph to reset filter
+      graph.update();
     }
+  }
+
+  function pushNodes(selection) {
+    var links = selection.links();
+    
+    links.forEach(function(link) {
+      if(!importantNodes.includes(link.domain().id())) {
+        importantNodes.push(link.domain().id());
+      }
+      
+      if(!importantNodes.includes(link.range().id())) {
+        importantNodes.push(link.range().id());
+      }
+    });
   }
 
   function removeDatatypesAndLiterals(){
@@ -151,24 +140,3 @@ module.exports = function (){
   
   return filter;
 };
-
-// PREVIOUS METHOD USING UNFILTERED PROPERTIES THAT 
-// CORRECTLY INSERTED NODES TO GRAPH
-// unfilteredProperties.forEach(function(property) {
-//   if(property.domain().id() == selection.id() ||
-//     property.range().id() == selection.id()) {
-
-//     // NOTE: comment the else statement if want only children of the nodes
-//     if(property.domain().id() == selection.id()) {
-
-//       property.range().collapsible(true);
-//       selection.collapsible(false);
-//       importantNodes.push(property.range().id());
-//     }
-//      else {
-//       property.domain().collapsible(true);
-//       selection.collapsible(false);
-//       importantNodes.push(property.domain().id());
-//     }
-//   }
-// });
