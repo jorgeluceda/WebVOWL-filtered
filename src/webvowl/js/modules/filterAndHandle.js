@@ -12,7 +12,7 @@ module.exports = function (){
   
   var unfilteredNodes, unfilteredProperties;
   //considering "flash foods" and "flash flooding" as important nodes for now
-  var importantNodes = ["232", "105"];
+  var importantNodes = ["232", "105", "226"];
   var timesFiltered = 1;
   
   /**
@@ -28,7 +28,6 @@ module.exports = function (){
       unfilteredNodes = untouchedNodes;
       unfilteredProperties = untouchedProperties;
     }
-
     //increase number of times filtered
     timesFiltered++;
 
@@ -36,7 +35,13 @@ module.exports = function (){
     if ( this.enabled() ) {
         removeDatatypesAndLiterals();
     }
-    
+
+    // unfilteredNodes.forEach(function(selection) {
+    //   if(selection.id() == importantNodes[1] || selection.id() == importantNodes[2]) {
+    //     selection.collapsible(true);
+    //   }
+    // });
+
     filteredNodes = nodes;
     filteredProperties = properties;
   };
@@ -64,9 +69,12 @@ module.exports = function (){
           // NOTE: comment the else statement if want only children of the nodes
           if(property.domain().id() == selection.id()) {
               importantNodes.push(property.range().id());
-          }
+              selection.collapsible(false);
+            }
            else {
               importantNodes.push(property.domain().id());
+              property.domain().collapsible(true);
+              selection.collapsible(false);
           }
         }
       });
@@ -128,3 +136,27 @@ module.exports = function (){
   
   return filter;
 };
+
+
+
+      // //working handler on click! 
+      // unfilteredProperties.forEach(function(property) {
+      //   if(property.domain().id() == selection.id() ||
+      //     property.range().id() == selection.id()) {
+
+      //     // TO REVIEW: right now it is pushing no matter if the 
+      //     // node is a child or parent of that selection
+      //     // NOTE: comment the else statement if want only children of the nodes
+      //     if(property.domain().id() == selection.id()) {
+
+      //       property.range().collapsible(true);
+      //       selection.collapsible(false);
+      //       importantNodes.push(property.range().id());
+      //     }
+      //      else {
+      //       property.domain().collapsible(true);
+      //       selection.collapsible(false);
+      //       importantNodes.push(property.domain().id());
+      //     }
+      //   }
+      // });
